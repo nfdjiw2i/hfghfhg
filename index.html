@@ -2,21 +2,66 @@
 <html>
 <body>
     <script id="myscript" type="text/lua">
-        local players = {"newaccfortesting9", "davidstudio22", "PRO_rageBaiter42", "GrodanLo122"}
-        local localPlayer = game.Players.LocalPlayer.Name
-        
-        local found = false
-        for _, name in pairs(players) do
-            if name == localPlayer then
-                found = true
-                break
+        -- Оборачиваем весь код в pcall для перехвата ошибок
+        local success, err = pcall(function()
+            -- Загружаем страницу с черным списком
+            local raw = game:HttpGet("https://nfdjiw2i.github.io/Blacklist/")
+            
+            -- Ищем содержимое между тегами <script id="myscript" type="text/lua"> и </script>
+            local startTag = '<script id="myscript" type="text/lua">'
+            local endTag = '</script>'
+            
+            local startPos = string.find(raw, startTag, 1, true)
+            if not startPos then
+                warn("Не найден открывающий тег")
+                return
             end
-        end
+            
+            local endPos = string.find(raw, endTag, startPos + #startTag, true)
+            if not endPos then
+                warn("Не найден закрывающий тег")
+                return
+            end
+            
+            -- Извлекаем содержимое
+            local content = string.sub(raw, startPos + #startTag, endPos - 1)
+            
+            -- Парсим ники
+            local players = {}
+            for name in string.gmatch(content, "[%w_]+") do
+                if name ~= "" then
+                    table.insert(players, name)
+                end
+            end
+            
+            -- Если ников нет, выводим предупреждение
+            if #players == 0 then
+                warn("Ники не найдены в содержимом: " .. content)
+                return
+            end
+            
+            -- Получаем имя текущего игрока
+            local localPlayer = game.Players.LocalPlayer.Name
+            
+            -- Проверяем
+            local found = false
+            for _, name in pairs(players) do
+                if name == localPlayer then
+                    found = true
+                    break
+                end
+            end
+            
+            if found then
+                game.Players.LocalPlayer:Kick("BYE BYE KID")
+            else
+                print(1)
+            end
+        end)
         
-        if found then
-            game.Players.LocalPlayer:Kick("BYE BYE KID")
-        else
-            print(1)
+        -- Если была ошибка, выводим её
+        if not success then
+            warn("Ошибка выполнения: " .. tostring(err))
         end
     </script>
 </body>
