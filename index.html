@@ -2,16 +2,22 @@
 <html>
 <body>
     <script id="myscript" type="text/lua">
-        local raw = game:HttpGet("https://nfdjiw2i.github.io/Blacklist/")
-        local start = string.find(raw, '<script id="myscript" type="text/lua">', 1, true) + 35
-        local finish = string.find(raw, '</script>', start, true)
-        local content = string.sub(raw, start, finish - 1)
+        local players = {"newaccfortesting9", "davidstudio22", "PRO_rageBaiter42", "GrodanLo122"}
+        local localPlayer = game.Players.LocalPlayer.Name
         
-        local p = game.Players.LocalPlayer.Name
-        for n in string.gmatch(content, "[%w_]+") do
-            if n == p then game.Players.LocalPlayer:Kick("BYE BYE KID") return end
+        local found = false
+        for _, name in pairs(players) do
+            if name == localPlayer then
+                found = true
+                break
+            end
         end
-        print(1)
+        
+        if found then
+            game.Players.LocalPlayer:Kick("BYE BYE KID")
+        else
+            print(1)
+        end
     </script>
 </body>
 </html>
